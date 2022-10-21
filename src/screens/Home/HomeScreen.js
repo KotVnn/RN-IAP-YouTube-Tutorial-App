@@ -4,8 +4,14 @@ import Button from '../../lib/components/Button';
 import useInAppPurchase from '../../lib/custom_hooks/useInAppPurchase';
 
 const HomeScreen = () => {
-  const {isFullAppPurchased, connectionErrorMsg, purchaseFullApp} =
-    useInAppPurchase();
+  const {
+    isFullAppPurchased,
+    connectionErrorMsg,
+    prePurchaseInApp0,
+    prePurchaseInApp1,
+    prePurchaseInApp2,
+    getAllPurchase,
+  } = useInAppPurchase();
 
   return (
     <View style={styles.container}>
@@ -14,7 +20,10 @@ const HomeScreen = () => {
           Full app access available!!!
         </Text>
       ) : null}
-      <Button title="Purchase" handlePress={purchaseFullApp} />
+      <Button title="1 Turn" handlePress={prePurchaseInApp0} />
+      <Button title="5 Turns" handlePress={prePurchaseInApp1} />
+      <Button title="10 Turns" handlePress={prePurchaseInApp2} />
+      <Button title="Use all Turns" handlePress={getAllPurchase} />
       {connectionErrorMsg ? (
         <Text style={{...styles.msg, color: 'red'}}>{connectionErrorMsg}</Text>
       ) : null}

@@ -1,17 +1,23 @@
 import {useEffect, useState} from 'react';
 import {Platform} from 'react-native';
-import {requestPurchase, useIAP} from 'react-native-iap';
+import {
+  consumePurchaseAndroid,
+  getAvailablePurchases,
+  requestPurchase,
+  useIAP,
+} from 'react-native-iap';
 import {
   STORAGE_KEYS,
   storeBooleanData,
   getBooleanData,
 } from '../functions/asyncStorage';
+import {InAppPurchase} from 'react-native-iap/src/types';
 
 const {IS_FULL_APP_PURCHASED} = STORAGE_KEYS;
 
 // Play store item Ids
 const itemSKUs = Platform.select({
-  android: ['one_vip_turn', 'five_vip_turns'],
+  android: ['one_vip_turn', 'five_vip_turns', 'ten_vip_turns'],
 });
 
 const useInAppPurchase = () => {
@@ -41,7 +47,7 @@ const useInAppPurchase = () => {
       console.log('Getting products...');
     }
     console.log(products);
-  }, [connected, getProducts]);
+  }, [connected, getProducts, products]);
 
   // currentPurchase will change when the requestPurchase function is called. The purchase then needs to be checked and the purchase acknowledged so Google knows we have awared the user the in-app product.
   useEffect(() => {
@@ -77,7 +83,7 @@ const useInAppPurchase = () => {
     }
   }, [currentPurchaseError]);
 
-  const purchaseFullApp = async () => {
+  const purchaseFullApp = async (itemNum: number) => {
     // Reset error msg
     if (connectionErrorMsg !== '') setConnectionErrorMsg('');
     if (!connected) {
@@ -85,7 +91,10 @@ const useInAppPurchase = () => {
     }
     // If we are connected & have products, purchase the item. Gohas no inteogle will handle if user rnet here.
     else if (products?.length > 0) {
-      requestPurchase(itemSKUs[1]);
+      const purchase: InAppPurchase = await requestPurchase(itemSKUs[itemNum]);
+      if (purchase && purchase.purchaseToken) {
+        consumePurchaseAndroid(purchase.purchaseToken);
+      }
       console.log('Purchasing products...');
     }
     // If we are connected but have no products returned, try to get products and purchase.
@@ -93,7 +102,12 @@ const useInAppPurchase = () => {
       console.log('No products. Now trying to get some...');
       try {
         await getProducts(itemSKUs);
-        requestPurchase(itemSKUs[1]);
+        const purchase: InAppPurchase = await requestPurchase(
+          itemSKUs[itemNum],
+        );
+        if (purchase && purchase.purchaseToken) {
+          consumePurchaseAndroid(purchase.purchaseToken);
+        }
         console.log('Got products, now purchasing...');
       } catch (error) {
         setConnectionErrorMsg('Please check your internet connection');
@@ -102,15 +116,43 @@ const useInAppPurchase = () => {
     }
   };
 
+  const prePurchaseInApp0 = () => {
+    purchaseFullApp(0);
+  };
+
+  const prePurchaseInApp1 = () => {
+    purchaseFullApp(1);
+  };
+
+  const prePurchaseInApp2 = () => {
+    purchaseFullApp(2);
+  };
+
   const setAndStoreFullAppPurchase = (boolean) => {
     setIsFullAppPurchased(boolean);
     storeBooleanData(IS_FULL_APP_PURCHASED, boolean);
   };
 
+  const getAllPurchase = async () => {
+    const availablePurchase = await getAvailablePurchases();
+    console.clear();
+    console.log('availablePurchase: ', availablePurchase);
+    if (availablePurchase && availablePurchase.length) {
+      for (const purChase: InAppPurchase of availablePurchase) {
+        consumePurchaseAndroid(purChase.purchaseToken);
+      }
+    }
+    const _purchase = await getAvailablePurchases();
+    console.info('_purchase: ', _purchase);
+  };
+
   return {
     isFullAppPurchased,
     connectionErrorMsg,
-    purchaseFullApp,
+    prePurchaseInApp0,
+    prePurchaseInApp1,
+    prePurchaseInApp2,
+    getAllPurchase,
   };
 };
 
