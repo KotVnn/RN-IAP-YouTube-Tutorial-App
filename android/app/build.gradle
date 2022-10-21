@@ -135,7 +135,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.doabledanny.atomicmeditation"
+        applicationId "com.betbrain.guesstaixiu"
         missingDimensionStrategy "store", "play"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion

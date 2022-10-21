@@ -11,7 +11,7 @@ const {IS_FULL_APP_PURCHASED} = STORAGE_KEYS;
 
 // Play store item Ids
 const itemSKUs = Platform.select({
-  android: ['full_app', 'test_4'],
+  android: ['one_vip_turn', 'five_vip_turns'],
 });
 
 const useInAppPurchase = () => {
