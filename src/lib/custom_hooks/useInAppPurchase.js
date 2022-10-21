@@ -43,7 +43,7 @@ const useInAppPurchase = () => {
   // Get products from play store.
   useEffect(() => {
     if (connected) {
-      getProducts(itemSKUs);
+      getProducts(itemSKUs).then();
       console.log('Getting products...');
     }
     console.log(products);
@@ -54,18 +54,24 @@ const useInAppPurchase = () => {
     const checkCurrentPurchase = async (purchase) => {
       if (purchase) {
         const receipt = purchase.transactionReceipt;
+        console.clear();
         console.log('RECEIPT: ', receipt);
-        if (receipt) {
-          // Give full app access
-          setAndStoreFullAppPurchase(true);
-          try {
-            const ackResult = await finishTransaction(purchase);
-            console.log('ackResult: ', ackResult);
-          } catch (ackErr) {
-            // We would need a backend to validate receipts for purhcases that pended for a while and were then declined. So I'll assume most purchase attempts go through successfully (OK ackResult) & take the hit for the ones that don't (user will still have full app access).
-            console.log('ackError: ', ackErr);
-          }
+        if (purchase && purchase.purchaseToken) {
+          consumePurchaseAndroid(purchase.purchaseToken).then((purchaseRs) => {
+            console.log('consumePurchaseAndroid', purchaseRs);
+          });
         }
+        // if (receipt) {
+        //   // Give full app access
+        //   setAndStoreFullAppPurchase(true);
+        //   try {
+        //     const ackResult = await finishTransaction(purchase);
+        //     console.log('ackResult: ', ackResult);
+        //   } catch (ackErr) {
+        //     // We would need a backend to validate receipts for purhcases that pended for a while and were then declined. So I'll assume most purchase attempts go through successfully (OK ackResult) & take the hit for the ones that don't (user will still have full app access).
+        //     console.log('ackError: ', ackErr);
+        //   }
+        // }
       }
     };
     checkCurrentPurchase(currentPurchase);
@@ -79,9 +85,10 @@ const useInAppPurchase = () => {
         !isFullAppPurchased
       ) {
         setAndStoreFullAppPurchase(true);
+        resetAllPurchase();
       }
     }
-  }, [currentPurchaseError]);
+  }, [currentPurchaseError, isFullAppPurchased]);
 
   const purchaseFullApp = async (itemNum: number) => {
     // Reset error msg
@@ -91,10 +98,9 @@ const useInAppPurchase = () => {
     }
     // If we are connected & have products, purchase the item. Gohas no inteogle will handle if user rnet here.
     else if (products?.length > 0) {
-      const purchase: InAppPurchase = await requestPurchase(itemSKUs[itemNum]);
-      if (purchase && purchase.purchaseToken) {
-        consumePurchaseAndroid(purchase.purchaseToken);
-      }
+      requestPurchase(itemSKUs[itemNum]).catch((error) => {
+        console.log(error.message);
+      });
       console.log('Purchasing products...');
     }
     // If we are connected but have no products returned, try to get products and purchase.
@@ -102,12 +108,9 @@ const useInAppPurchase = () => {
       console.log('No products. Now trying to get some...');
       try {
         await getProducts(itemSKUs);
-        const purchase: InAppPurchase = await requestPurchase(
-          itemSKUs[itemNum],
-        );
-        if (purchase && purchase.purchaseToken) {
-          consumePurchaseAndroid(purchase.purchaseToken);
-        }
+        requestPurchase(itemSKUs[itemNum]).catch((error) => {
+          console.log(error.message);
+        });
         console.log('Got products, now purchasing...');
       } catch (error) {
         setConnectionErrorMsg('Please check your internet connection');
@@ -133,7 +136,7 @@ const useInAppPurchase = () => {
     storeBooleanData(IS_FULL_APP_PURCHASED, boolean);
   };
 
-  const getAllPurchase = async () => {
+  const resetAllPurchase = async () => {
     const availablePurchase = await getAvailablePurchases();
     console.clear();
     console.log('availablePurchase: ', availablePurchase);
@@ -152,7 +155,7 @@ const useInAppPurchase = () => {
     prePurchaseInApp0,
     prePurchaseInApp1,
     prePurchaseInApp2,
-    getAllPurchase,
+    resetAllPurchase,
   };
 };
 

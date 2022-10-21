@@ -10,7 +10,7 @@ const HomeScreen = () => {
     prePurchaseInApp0,
     prePurchaseInApp1,
     prePurchaseInApp2,
-    getAllPurchase,
+    resetAllPurchase,
   } = useInAppPurchase();
 
   return (
@@ -23,7 +23,7 @@ const HomeScreen = () => {
       <Button title="1 Turn" handlePress={prePurchaseInApp0} />
       <Button title="5 Turns" handlePress={prePurchaseInApp1} />
       <Button title="10 Turns" handlePress={prePurchaseInApp2} />
-      <Button title="Use all Turns" handlePress={getAllPurchase} />
+      <Button title="Use all Turns" handlePress={resetAllPurchase} />
       {connectionErrorMsg ? (
         <Text style={{...styles.msg, color: 'red'}}>{connectionErrorMsg}</Text>
       ) : null}
