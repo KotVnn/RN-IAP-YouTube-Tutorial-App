@@ -23,6 +23,7 @@ const itemSKUs = Platform.select({
 const useInAppPurchase = () => {
   const [isFullAppPurchased, setIsFullAppPurchased] = useState(false);
   const [connectionErrorMsg, setConnectionErrorMsg] = useState('');
+  const [listItem, setListItem] = useState([]);
 
   const {
     connected,
@@ -45,6 +46,7 @@ const useInAppPurchase = () => {
     if (connected) {
       getProducts(itemSKUs).then();
       console.log('Getting products...');
+      setListItem(products);
     }
     console.log(products);
   }, [connected, getProducts, products]);
@@ -156,6 +158,7 @@ const useInAppPurchase = () => {
     prePurchaseInApp1,
     prePurchaseInApp2,
     resetAllPurchase,
+    listItem,
   };
 };
 
