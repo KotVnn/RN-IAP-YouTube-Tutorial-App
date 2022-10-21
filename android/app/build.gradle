@@ -136,6 +136,7 @@ android {
 
     defaultConfig {
         applicationId "com.doabledanny.atomicmeditation"
+        missingDimensionStrategy "store", "play"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -164,7 +165,7 @@ android {
                 keyAlias keystoreProperties['MYAPP_UPLOAD_KEY_ALIAS']
                 keyPassword keystoreProperties['MYAPP_UPLOAD_KEY_PASSWORD']
             }
-           
+
         }
     }
     buildTypes {
