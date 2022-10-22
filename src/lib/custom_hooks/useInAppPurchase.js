@@ -17,7 +17,18 @@ const {IS_FULL_APP_PURCHASED} = STORAGE_KEYS;
 
 // Play store item Ids
 const itemSKUs = Platform.select({
-  android: ['one_vip_turn', 'five_vip_turns', 'ten_vip_turns'],
+  android: [
+    '0_gem',
+    '1_gem',
+    '2_gem',
+    '3_gem',
+    '4_gem',
+    '5_gem',
+    '6_gem',
+    '7_gem',
+    '8_gem',
+    '9_gem',
+  ],
 });
 
 const useInAppPurchase = () => {
@@ -133,6 +144,34 @@ const useInAppPurchase = () => {
     purchaseFullApp(2);
   };
 
+  const prePurchaseInApp3 = () => {
+    purchaseFullApp(3);
+  };
+
+  const prePurchaseInApp4 = () => {
+    purchaseFullApp(4);
+  };
+
+  const prePurchaseInApp5 = () => {
+    purchaseFullApp(5);
+  };
+
+  const prePurchaseInApp6 = () => {
+    purchaseFullApp(6);
+  };
+
+  const prePurchaseInApp7 = () => {
+    purchaseFullApp(7);
+  };
+
+  const prePurchaseInApp8 = () => {
+    purchaseFullApp(8);
+  };
+
+  const prePurchaseInApp9 = () => {
+    purchaseFullApp(9);
+  };
+
   const setAndStoreFullAppPurchase = (boolean) => {
     setIsFullAppPurchased(boolean);
     storeBooleanData(IS_FULL_APP_PURCHASED, boolean);
@@ -157,6 +196,13 @@ const useInAppPurchase = () => {
     prePurchaseInApp0,
     prePurchaseInApp1,
     prePurchaseInApp2,
+    prePurchaseInApp3,
+    prePurchaseInApp4,
+    prePurchaseInApp5,
+    prePurchaseInApp6,
+    prePurchaseInApp7,
+    prePurchaseInApp8,
+    prePurchaseInApp9,
     resetAllPurchase,
     listItem,
   };
